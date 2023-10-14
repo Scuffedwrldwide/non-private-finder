@@ -4,8 +4,8 @@ import os
 # Path to the project directory to search for Java files
 # Assumes this script is in a separate folder to the project directory, but in the same parent directory
 project_directory = '../'
-
 found = False
+print('\n')
 
 def find_non_private(java_code):
     """
@@ -50,11 +50,12 @@ def process_java_file(file_path):
         if class_name_match:
             class_name = class_name_match.group(1)
             non_private_attributes = find_non_private(java_code)
-            if len(non_private_attributes) > 0:
+            num_attributes = len(non_private_attributes)
+            if num_attributes > 0:
                 found = True
-                print(f"Class: {class_name} @ {relative_path} ({len(non_private_attributes)})")
+                print(f"Class: \033[1m{class_name}\033[0m @ {relative_path} \033[33m\033[1m({num_attributes})\033[0m")
                 for attribute in non_private_attributes:
-                    print(f"  {attribute[0]} {attribute[1]} {attribute[2]} found in line {attribute[3]}")
+                    print(f"  {attribute[0]} {attribute[1]} \033[1m{attribute[2]}\033[0m found in \033[33mline {attribute[3]}\033[0m\n")
 
 # Walk through project directory and process each Java file, assumes there is a .git directory to avoid
 for root, dirs, files in os.walk(project_directory):
@@ -67,4 +68,4 @@ for root, dirs, files in os.walk(project_directory):
             process_java_file(file_path)
 
 if not found:
-    print("No non-private attributes found.")
+    print("\033[1m \033[32m No non-private attributes found!\033[0m")
