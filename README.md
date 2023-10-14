@@ -1,5 +1,5 @@
 # non-private-finder
-Simple python script that finds non private attributes in your java project. 
+Simple python script that finds non private attributes in your Java project. 
 ## Dependencies
 - Python 3 - any version should work
 ## How to use
