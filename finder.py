@@ -59,7 +59,7 @@ def process_java_file(file_path):
 # Walk through project directory and process each Java file, assumes there is a .git directory to avoid
 for root, dirs, files in os.walk(project_directory):
     for dir in dirs:
-        if dir == '.git':
+        if dir == '.git' or dir == 'po-uilib': # Ignore .git and po-uilib directories
             dirs.remove(dir)
     for file in files:
         if file.endswith('.java'):
