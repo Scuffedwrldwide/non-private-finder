@@ -5,6 +5,8 @@ import os
 # Assumes this script is in a separate folder to the project directory, but in the same parent directory
 project_directory = '../'
 
+found = False
+
 def find_non_private(java_code):
     """
     Finds non-private attributes in Java code.
@@ -42,15 +44,17 @@ def process_java_file(file_path):
     with open(file_path, 'r') as file:
         java_code = file.read()
         relative_path = os.path.relpath(file_path, project_directory)
-
+        global found # Use global variable to indicate if any non-private attributes were found
+                     # I know this is awful, but I'm lazy. Fork and make a pull request about it.
         class_name_match = re.search(r'class (\w+)', java_code)
         if class_name_match:
             class_name = class_name_match.group(1)
             non_private_attributes = find_non_private(java_code)
-
-            print(f"Class: {class_name} @ {relative_path} ({len(non_private_attributes)})")
-            for attribute in non_private_attributes:
-                print(f"  Modifier: {attribute[0]}, Type: {attribute[1]}, Name: {attribute[2]}, Line: {attribute[3]}")
+            if len(non_private_attributes) > 0:
+                found = True
+                print(f"Class: {class_name} @ {relative_path} ({len(non_private_attributes)})")
+                for attribute in non_private_attributes:
+                    print(f"  {attribute[0]} {attribute[1]} {attribute[2]} found in line {attribute[3]}")
 
 # Walk through project directory and process each Java file, assumes there is a .git directory to avoid
 for root, dirs, files in os.walk(project_directory):
@@ -61,3 +65,6 @@ for root, dirs, files in os.walk(project_directory):
         if file.endswith('.java'):
             file_path = os.path.join(root, file)
             process_java_file(file_path)
+
+if not found:
+    print("No non-private attributes found.")
