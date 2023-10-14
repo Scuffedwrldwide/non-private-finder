@@ -8,7 +8,7 @@ Simple python script that finds non private attributes in your Java project.
   **Optionally** edit the *project_directory* variable to a root folder of your choosing
   
 2. CD into the cloned folder and run the script <br>
-   ```cd non-private-finder && python finder.py``` <br>
+   ```cd non-private-finder && python3 finder.py``` <br>
    
 3. FIX YOUR CODE!!!
 
