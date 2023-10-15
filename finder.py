@@ -22,25 +22,28 @@ def process_java_file(file_path):
 
         java_code = file.read()
         relative_path = os.path.relpath(file_path, project_directory)
-        # Matches all class code, group one gets everything between curly brackets
+        # Matches class declaration outright, group 1 gets the name while group 2 gets everything between curly brackets
         outer_class_code = regex.findall(r'class .*\{([\S\s]*)\}', java_code) 
-
-
+        class_name = regex.findall(r'class (\w+)', java_code)
         class_code_with_inner = []
 
         while len(outer_class_code): # While there are possibly still internal classes to process
             class_code_with_inner += outer_class_code # Add outer class outright
-            outer_class_code += regex.findall(r'class .*\{([\S\s]*)\}', outer_class_code.pop()) # Add inner classes to process
+            class_to_parse = outer_class_code.pop() # Get outer class code to parse
+            outer_class_code += regex.findall(r'class .*\{([\S\s]*)\}', class_to_parse) # Queue any inner classes to process
+            class_name += regex.findall(r'class (\w+)', class_to_parse) # Add inner classes names
 
         for class_code in class_code_with_inner: 
             # For each string of code pertaining to a class remove all code between curly brackets, to avoid finding attributes in methods
             class_code_no_bracket = regex.sub(r'\{(?:[^{}]*|(?R))*\}', '', class_code)
-            
-            for non_private_attributes in regex.findall(r'^((?!.*(abstract|private).*)(?(?=.*\)).*?=.*).*;)$', class_code_no_bracket, regex.M):
+            current_name = class_name.pop()
+            for non_private_attributes in regex.findall(r'^\s+((?!.*(abstract|private).*)(?(?=.*\)).*?=.*).*;)$', class_code_no_bracket, regex.M):
                 found = True
                 print(f"File: \033[1m{relative_path}\033[0m")
                 for attribute in non_private_attributes:
-                    print(f"    \033[33m{attribute}\033[0m\n")
+                    if attribute != '':
+                        print(f"        \033[33m{attribute}\033[0m in class \033[34m{current_name}\033[0m \n")
+
 
 # Walk through project directory and process each Java file, assumes there is a .git directory to avoid
 for root, dirs, files in os.walk(project_directory):
