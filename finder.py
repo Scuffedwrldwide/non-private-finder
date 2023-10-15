@@ -19,6 +19,7 @@ def process_java_file(file_path):
     """
     with open(file_path, 'r') as file:
         global found
+        found_in_file = False
 
         java_code = file.read()
         relative_path = os.path.relpath(file_path, project_directory)
@@ -36,14 +37,17 @@ def process_java_file(file_path):
         for class_code in class_code_with_inner: 
             # For each string of code pertaining to a class remove all code between curly brackets, to avoid finding attributes in methods
             class_code_no_bracket = regex.sub(r'\{(?:[^{}]*|(?R))*\}', '', class_code)
-            current_name = class_name.pop()
+
             for non_private_attributes in regex.findall(r'^\s+((?!.*(abstract|private).*)(?(?=.*\)).*?=.*).*;)$', class_code_no_bracket, regex.M):
+                current_name = class_name.pop(0)
                 found = True
-                print(f"File: \033[1m{relative_path}\033[0m")
+                if not found_in_file: 
+                    print(f"File: \033[1m{relative_path}\033[0m")
+                    found_in_file = True
                 for attribute in non_private_attributes:
                     if attribute != '':
-                        print(f"        \033[33m{attribute}\033[0m in class \033[34m{current_name}\033[0m \n")
-
+                        print(f"        \033[33m{attribute}\033[0m in class \033[34m{current_name}\033[0m")
+        if found_in_file: print('\n')
 
 # Walk through project directory and process each Java file, assumes there is a .git directory to avoid
 for root, dirs, files in os.walk(project_directory):
