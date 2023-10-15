@@ -36,7 +36,7 @@ def process_java_file(file_path):
             # For each string of code pertaining to a class remove all code between curly brackets, to avoid finding attributes in methods
             class_code_no_bracket = regex.sub(r'\{(?:[^{}]*|(?R))*\}', '', class_code)
             
-            for non_private_attributes in regex.findall(r'^((?!.*(abstract|private).*)(?=.*=).*;)$', class_code_no_bracket, regex.M):
+            for non_private_attributes in regex.findall(r'^((?!.*(abstract|private).*)(?(?=.*\)).*?=.*).*;)$', class_code_no_bracket, regex.M):
                 found = True
                 print(f"File: \033[1m{relative_path}\033[0m")
                 for attribute in non_private_attributes:
