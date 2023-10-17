@@ -39,7 +39,7 @@ def process_java_file(file_path):
             class_code_no_bracket = regex.sub(r'\{(?:[^{}]*|(?R))*\}', '', class_code)
 
             for non_private_attributes in regex.findall(r'^\s+((?!.*(abstract|private).*)(?(?=.*\)).*?=.*).*;)$', class_code_no_bracket, regex.M):
-                current_name = class_name.pop(0)
+                if class_name != []: current_name = class_name.pop(0)
                 found = True
                 if not found_in_file: 
                     print(f"File: \033[1m{relative_path}\033[0m")
