@@ -3,7 +3,7 @@ import os
 
 # Path to the project directory to search for Java files
 # Assumes this script is in a separate folder to the project directory, but in the same parent directory
-project_directory = '/home/marasenna/projeto/045/xxl-core/src/xxl/cell/'
+project_directory = '../'
 found = False
 print('\n')
 
